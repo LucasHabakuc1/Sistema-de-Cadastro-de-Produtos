@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Cadastro de Produtos</title>
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --primary-hover: #45a049;
+            --danger-color: #f44336;
+            --danger-hover: #d32f2f;
+            --info-color: #2196F3;
+            --info-hover: #0b7dda;
+            --border-color: #ddd;
+            --light-bg: #f5f5f5;
+            --table-even-bg: #f9f9f9;
+            --table-header-bg: #f2f2f2;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: var(--light-bg);
+            padding: 10px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        h1, h2, h3 {
+            color: #2c3e50;
+            margin-bottom: 12px;
+        }
+        
+        h1 {
+            font-size: 24px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 8px;
+            margin-bottom: 20px;
+        }
+        
+        h2 {
+            font-size: 20px;
+            margin-top: 20px;
+        }
+        
+        h3 {
+            font-size: 16px;
+            margin-top: 12px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #555;
+            font-size: 14px;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+        }
+        
+        button {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 8px;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        button i {
+            font-size: 14px;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+        
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: var(--danger-hover);
+        }
+        
+        .btn-info {
+            background-color: var(--info-color);
+            color: white;
+        }
+        
+        .btn-info:hover {
+            background-color: var(--info-hover);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            font-size: 14px;
+        }
+        
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 8px 10px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: var(--table-header-bg);
+            font-weight: 600;
+            font-size: 13px;
+        }
+        
+        tr:nth-child(even) {
+            background-color: var(--table-even-bg);
+        }
+        
+        tr:hover {
+            background-color: rgba(76, 175, 80, 0.05);
+        }
+        
+        .section {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .total {
+            font-weight: bold;
+            margin: 10px 0;
+            font-size: 1.1em;
+            padding: 8px;
+            background-color: rgba(76, 175, 80, 0.1);
+            border-radius: 4px;
+            display: inline-block;
+            font-size: 14px;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        
+        .alert {
+            padding: 10px 12px;
+            border-radius: 4px;
+            margin-bottom: 12px;
+            display: none;
+            font-size: 14px;
+        }
+        
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .empty-message {
+            color: #777;
+            font-style: italic;
+            padding: 12px;
+            text-align: center;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+            margin: 15px 0;
+            font-size: 14px;
+        }
+        
+        /* Estilos específicos para telas pequenas */
+        @media (max-width: 600px) {
+            body {
+                padding: 5px;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 20px;
+            }
+            
+            h2 {
+                font-size: 18px;
+            }
+            
+            h3 {
+                font-size: 16px;
+            }
+            
+            table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                gap: 5px;
+            }
+            
+            button {
+                width: 100%;
+                margin-right: 0;
+            }
+            
+            .mobile-stack {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .mobile-stack button {
+                width: 100%;
+            }
+        }
+        
+        /* Ajustes para tabelas em mobile */
+        @media (max-width: 480px) {
+            th, td {
+                padding: 6px 8px;
+                font-size: 13px;
+            }
+            
+            .total {
+                font-size: 1em;
+                padding: 6px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-boxes"></i> Sistema de Cadastro de Produtos</h1>
+        
+        <div id="successAlert" class="alert alert-success"></div>
+        <div id="errorAlert" class="alert alert-danger"></div>
+        
+        <!-- Seção de Itens -->
+        <div class="section">
+            <h2><i class="fas fa-cube"></i> Cadastro de Itens</h2>
+            <div class="form-group">
+                <label for="itemName"><i class="fas fa-tag"></i> Nome do Item:</label>
+                <input type="text" id="itemName" placeholder="Digite o nome do item" required>
+            </div>
+            <div class="form-group">
+                <label for="itemValue"><i class="fas fa-money-bill-wave"></i> Valor Unitário:</label>
+                <input type="number" id="itemValue" step="0.01" min="0" placeholder="0,00" required>
+            </div>
+            <div class="mobile-stack">
+                <button id="addItemBtn" class="btn-primary">
+                    <i class="fas fa-plus"></i> Adicionar Item
+                </button>
+            </div>
+            
+            <h3><i class="fas fa-list"></i> Itens Cadastrados</h3>
+            <div style="overflow-x: auto;">
+                <table id="itemsTable">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Valor Unitário</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="itemsList">
+                        <tr>
+                            <td colspan="3" class="empty-message">Nenhum item cadastrado</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Seção de Produtos -->
+        <div class="section">
+            <h2><i class="fas fa-box-open"></i> Cadastro de Produtos</h2>
+            <div class="form-group">
+                <label for="productName"><i class="fas fa-tag"></i> Nome do Produto:</label>
+                <input type="text" id="productName" placeholder="Digite o nome do produto" required>
+            </div>
+            
+            <h3><i class="fas fa-list-ol"></i> Itens do Produto</h3>
+            <div class="form-group">
+                <label for="selectItem"><i class="fas fa-cube"></i> Selecione um Item:</label>
+                <select id="selectItem">
+                    <option value="">Selecione um item</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="itemQuantity"><i class="fas fa-hashtag"></i> Quantidade:</label>
+                <input type="number" id="itemQuantity" min="1" value="1" required>
+            </div>
+            <div class="mobile-stack">
+                <button id="addItemToProductBtn" class="btn-primary">
+                    <i class="fas fa-plus"></i> Adicionar Item ao Produto
+                </button>
+            </div>
+            
+            <div style="overflow-x: auto;">
+                <table id="productItemsTable">
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Valor Unitário</th>
+                            <th>Quantidade</th>
+                            <th>Subtotal</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productItemsList">
+                        <tr>
+                            <td colspan="5" class="empty-message">Nenhum item adicionado ao produto</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="total" id="productTotal"><i class="fas fa-calculator"></i> Total: R$ 0,00</div>
+            <div class="total" id="productWithMargin"><i class="fas fa-percentage"></i> Total com Margem de 2%: R$ 0,00</div>
+            
+            <div class="action-buttons mobile-stack">
+                <button id="saveProductBtn" class="btn-primary">
+                    <i class="fas fa-save"></i> Salvar Produto
+                </button>
+                <button id="cancelProductBtn" class="btn-danger hidden">
+                    <i class="fas fa-times"></i> Cancelar Edição
+                </button>
+            </div>
+        </div>
+        
+        <!-- Lista de Produtos Cadastrados -->
+        <div class="section">
+            <h2><i class="fas fa-clipboard-list"></i> Produtos Cadastrados</h2>
+            <div style="overflow-x: auto;">
+                <table id="productsTable">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Custo Total</th>
+                            <th>Preço com Margem</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productsList">
+                        <tr>
+                            <td colspan="4" class="empty-message">Nenhum produto cadastrado</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variáveis globais
+        let items = JSON.parse(localStorage.getItem('productSystemItems')) || [];
+        let products = JSON.parse(localStorage.getItem('productSystemProducts')) || [];
+        let currentProductItems = [];
+        let editingProductId = null;
+        
+        // Elementos do DOM
+        const itemNameInput = document.getElementById('itemName');
+        const itemValueInput = document.getElementById('itemValue');
+        const addItemBtn = document.getElementById('addItemBtn');
+        const itemsList = document.getElementById('itemsList');
+        const selectItem = document.getElementById('selectItem');
+        const itemQuantityInput = document.getElementById('itemQuantity');
+        const addItemToProductBtn = document.getElementById('addItemToProductBtn');
+        const productItemsList = document.getElementById('productItemsList');
+        const productNameInput = document.getElementById('productName');
+        const saveProductBtn = document.getElementById('saveProductBtn');
+        const cancelProductBtn = document.getElementById('cancelProductBtn');
+        const productsList = document.getElementById('productsList');
+        const productTotal = document.getElementById('productTotal');
+        const productWithMargin = document.getElementById('productWithMargin');
+        const successAlert = document.getElementById('successAlert');
+        const errorAlert = document.getElementById('errorAlert');
+        
+        // Event Listeners
+        addItemBtn.addEventListener('click', addItem);
+        addItemToProductBtn.addEventListener('click', addItemToProduct);
+        saveProductBtn.addEventListener('click', saveProduct);
+        cancelProductBtn.addEventListener('click', cancelEdit);
+        
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => {
+            updateItemsList();
+            updateItemSelect();
+            updateProductsList();
+        });
+        
+        // Funções de utilidade
+        function showAlert(element, message) {
+            element.textContent = message;
+            element.style.display = 'block';
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 5000);
+        }
+        
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('pt-BR', { 
+                style: 'currency', 
+                currency: 'BRL' 
+            }).format(value);
+        }
+        
+        function saveToLocalStorage() {
+            localStorage.setItem('productSystemItems', JSON.stringify(items));
+            localStorage.setItem('productSystemProducts', JSON.stringify(products));
+        }
+        
+        // Funções de itens
+        function addItem() {
+            const name = itemNameInput.value.trim();
+            const value = parseFloat(itemValueInput.value);
+            
+            if (!name || isNaN(value) || value <= 0) {
+                showAlert(errorAlert, 'Por favor, preencha todos os campos corretamente.');
+                return;
+            }
+            
+            const newItem = {
+                id: Date.now(),
+                name,
+                value
+            };
+            
+            items.push(newItem);
+            saveToLocalStorage();
+            updateItemsList();
+            updateItemSelect();
+            clearItemForm();
+            
+            showAlert(successAlert, 'Item adicionado com sucesso!');
+        }
+        
+        function updateItemsList() {
+            if (items.length === 0) {
+                itemsList.innerHTML = '<tr><td colspan="3" class="empty-message">Nenhum item cadastrado</td></tr>';
+                return;
+            }
+            
+            itemsList.innerHTML = '';
+            
+            items.forEach(item => {
+                const row = document.createElement('tr');
+                
+                row.innerHTML = `
+                    <td>${item.name}</td>
+                    <td>${formatCurrency(item.value)}</td>
+                    <td class="action-buttons">
+                        <button class="btn-info" onclick="editItem(${item.id})">
+                            <i class="fas fa-edit"></i> <span class="action-text">Editar</span>
+                        </button>
+                        <button class="btn-danger" onclick="deleteItem(${item.id})">
+                            <i class="fas fa-trash"></i> <span class="action-text">Excluir</span>
+                        </button>
+                    </td>
+                `;
+                
+                itemsList.appendChild(row);
+            });
+        }
+        
+        function editItem(id) {
+            const item = items.find(i => i.id === id);
+            if (!item) return;
+            
+            itemNameInput.value = item.name;
+            itemValueInput.value = item.value;
+            itemNameInput.focus();
+            
+            // Remover o item da lista
+            items = items.filter(i => i.id !== id);
+            saveToLocalStorage();
+            updateItemsList();
+            updateItemSelect();
+            
+            showAlert(successAlert, 'Item pronto para edição. Faça as alterações e clique em Adicionar Item.');
+        }
+        
+        function deleteItem(id) {
+            if (confirm('Tem certeza que deseja excluir este item? Esta ação não pode ser desfeita.')) {
+                // Verificar se o item está sendo usado em algum produto
+                const isUsedInProducts = products.some(product => 
+                    product.items.some(item => item.itemId === id)
+                );
+                
+                if (isUsedInProducts) {
+                    showAlert(errorAlert, 'Este item está sendo usado em um ou mais produtos e não pode ser excluído.');
+                    return;
+                }
+                
+                items = items.filter(item => item.id !== id);
+                saveToLocalStorage();
+                updateItemsList();
+                updateItemSelect();
+                
+                showAlert(successAlert, 'Item excluído com sucesso!');
+            }
+        }
+        
+        function clearItemForm() {
+            itemNameInput.value = '';
+            itemValueInput.value = '';
+            itemNameInput.focus();
+        }
+        
+        function updateItemSelect() {
+            selectItem.innerHTML = '<option value="">Selecione um item</option>';
+            
+            if (items.length === 0) {
+                selectItem.disabled = true;
+                return;
+            }
+            
+            selectItem.disabled = false;
+            
+            items.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item.id;
+                option.textContent = `${item.name} (${formatCurrency(item.value)})`;
+                selectItem.appendChild(option);
+            });
+        }
+        
+        // Funções de produtos
+        function addItemToProduct() {
+            const itemId = parseInt(selectItem.value);
+            const quantity = parseInt(itemQuantityInput.value);
+            
+            if (!itemId || isNaN(quantity) || quantity < 1) {
+                showAlert(errorAlert, 'Por favor, selecione um item e informe uma quantidade válida.');
+                return;
+            }
+            
+            const item = items.find(i => i.id === itemId);
+            if (!item) return;
+            
+            // Verificar se o item já está na lista
+            const existingItemIndex = currentProductItems.findIndex(i => i.itemId === itemId);
+            
+            if (existingItemIndex !== -1) {
+                // Atualizar quantidade se o item já existir
+                currentProductItems[existingItemIndex].quantity += quantity;
+            } else {
+                // Adicionar novo item
+                currentProductItems.push({
+                    itemId,
+                    name: item.name,
+                    value: item.value,
+                    quantity
+                });
+            }
+            
+            updateProductItemsList();
+            calculateTotal();
+            itemQuantityInput.value = '1';
+            selectItem.focus();
+        }
+        
+        function updateProductItemsList() {
+            if (currentProductItems.length === 0) {
+                productItemsList.innerHTML = '<tr><td colspan="5" class="empty-message">Nenhum item adicionado ao produto</td></tr>';
+                return;
+            }
+            
+            productItemsList.innerHTML = '';
+            
+            currentProductItems.forEach((item, index) => {
+                const subtotal = item.value * item.quantity;
+                
+                const row = document.createElement('tr');
+                
+                row.innerHTML = `
+                    <td>${item.name}</td>
+                    <td>${formatCurrency(item.value)}</td>
+                    <td>${item.quantity}</td>
+                    <td>${formatCurrency(subtotal)}</td>
+                    <td class="action-buttons">
+                        <button class="btn-info" onclick="editProductItem(${index})">
+                            <i class="fas fa-edit"></i> <span class="action-text">Editar</span>
+                        </button>
+                        <button class="btn-danger" onclick="removeProductItem(${index})">
+                            <i class="fas fa-trash"></i> <span class="action-text">Remover</span>
+                        </button>
+                    </td>
+                `;
+                
+                productItemsList.appendChild(row);
+            });
+        }
+        
+        function editProductItem(index) {
+            const item = currentProductItems[index];
+            if (!item) return;
+            
+            // Preencher os campos com os valores do item
+            selectItem.value = item.itemId;
+            itemQuantityInput.value = item.quantity;
+            selectItem.focus();
+            
+            // Remover o item da lista
+            currentProductItems.splice(index, 1);
+            updateProductItemsList();
+            calculateTotal();
+        }
+        
+        function removeProductItem(index) {
+            if (confirm('Tem certeza que deseja remover este item do produto?')) {
+                currentProductItems.splice(index, 1);
+                updateProductItemsList();
+                calculateTotal();
+            }
+        }
+        
+        function calculateTotal() {
+            let total = currentProductItems.reduce((sum, item) => sum + (item.value * item.quantity), 0);
+            let totalWithMargin = total * 1.02; // Adiciona 2% de margem
+            
+            productTotal.innerHTML = `<i class="fas fa-calculator"></i> Total: ${formatCurrency(total)}`;
+            productWithMargin.innerHTML = `<i class="fas fa-percentage"></i> Total com Margem de 2%: ${formatCurrency(totalWithMargin)}`;
+        }
+        
+        function saveProduct() {
+            const name = productNameInput.value.trim();
+            
+            if (!name) {
+                showAlert(errorAlert, 'Por favor, informe o nome do produto.');
+                productNameInput.focus();
+                return;
+            }
+            
+            if (currentProductItems.length === 0) {
+                showAlert(errorAlert, 'Por favor, adicione pelo menos um item ao produto.');
+                return;
+            }
+            
+            // Calcular totais
+            let total = currentProductItems.reduce((sum, item) => sum + (item.value * item.quantity), 0);
+            let totalWithMargin = total * 1.02;
+            
+            const productData = {
+                name,
+                items: currentProductItems.map(item => ({ ...item })),
+                total,
+                totalWithMargin
+            };
+            
+            if (editingProductId !== null) {
+                // Editar produto existente
+                const index = products.findIndex(p => p.id === editingProductId);
+                if (index !== -1) {
+                    productData.id = editingProductId;
+                    productData.createdAt = products[index].createdAt;
+                    productData.updatedAt = new Date().toISOString();
+                    products[index] = productData;
+                    
+                    showAlert(successAlert, 'Produto atualizado com sucesso!');
+                }
+                editingProductId = null;
+                cancelProductBtn.classList.add('hidden');
+            } else {
+                // Adicionar novo produto
+                productData.id = Date.now();
+                productData.createdAt = new Date().toISOString();
+                productData.updatedAt = productData.createdAt;
+                products.push(productData);
+                
+                showAlert(successAlert, 'Produto cadastrado com sucesso!');
+            }
+            
+            saveToLocalStorage();
+            updateProductsList();
+            clearProductForm();
+        }
+        
+        function updateProductsList() {
+            if (products.length === 0) {
+                productsList.innerHTML = '<tr><td colspan="4" class="empty-message">Nenhum produto cadastrado</td></tr>';
+                return;
+            }
+            
+            productsList.innerHTML = '';
+            
+            // Ordenar produtos por data de criação (mais recentes primeiro)
+            const sortedProducts = [...products].sort((a, b) => 
+                new Date(b.createdAt) - new Date(a.createdAt)
+            );
+            
+            sortedProducts.forEach(product => {
+                const row = document.createElement('tr');
+                
+                row.innerHTML = `
+                    <td>
+                        <strong>${product.name}</strong>
+                        <div style="font-size: 0.8em; color: #666;">
+                            Criado em: ${new Date(product.createdAt).toLocaleDateString()}
+                            ${product.updatedAt !== product.createdAt ? 
+                              `<br>Atualizado em: ${new Date(product.updatedAt).toLocaleDateString()}` : ''}
+                        </div>
+                    </td>
+                    <td>${formatCurrency(product.total)}</td>
+                    <td>${formatCurrency(product.totalWithMargin)}</td>
+                    <td class="action-buttons">
+                        <button class="btn-info" onclick="editProduct(${product.id})">
+                            <i class="fas fa-edit"></i> <span class="action-text">Editar</span>
+                        </button>
+                        <button class="btn-danger" onclick="deleteProduct(${product.id})">
+                            <i class="fas fa-trash"></i> <span class="action-text">Excluir</span>
+                        </button>
+                    </td>
+                `;
+                
+                productsList.appendChild(row);
+            });
+        }
+        
+        function editProduct(id) {
+            const product = products.find(p => p.id === id);
+            if (!product) return;
+            
+            // Preencher o formulário com os dados do produto
+            productNameInput.value = product.name;
+            currentProductItems = product.items.map(item => ({ ...item }));
+            
+            editingProductId = id;
+            cancelProductBtn.classList.remove('hidden');
+            
+            updateProductItemsList();
+            calculateTotal();
+            productNameInput.focus();
+            
+            // Scroll para o formulário de produto
+            document.querySelector('.section:nth-child(3)').scrollIntoView({ 
+                behavior: 'smooth' 
+            });
+        }
+        
+        function deleteProduct(id) {
+            if (confirm('Tem certeza que deseja excluir este produto? Esta ação não pode ser desfeita.')) {
+                products = products.filter(product => product.id !== id);
+                saveToLocalStorage();
+                updateProductsList();
+                
+                showAlert(successAlert, 'Produto excluído com sucesso!');
+            }
+        }
+        
+        function cancelEdit() {
+            clearProductForm();
+            editingProductId = null;
+            cancelProductBtn.classList.add('hidden');
+        }
+        
+        function clearProductForm() {
+            productNameInput.value = '';
+            currentProductItems = [];
+            productItemsList.innerHTML = '<tr><td colspan="5" class="empty-message">Nenhum item adicionado ao produto</td></tr>';
+            productTotal.innerHTML = '<i class="fas fa-calculator"></i> Total: R$ 0,00';
+            productWithMargin.innerHTML = '<i class="fas fa-percentage"></i> Total com Margem de 2%: R$ 0,00';
+            productNameInput.focus();
+        }
+    </script>
+</body>
+</html>
